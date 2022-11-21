@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders', 
     'storages',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -61,11 +62,25 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dishesz.wsgi.application'
+ASGI_APPLICATION = 'dishesz.asgi.application'
+
+CHANNEL_LAYERS = { 
+    'default': { 
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': { 
+            "hosts": ['redis://redis:6379']
+        }
+    }
+}
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config('DATABASE_ENGINE'),
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': config('DATABASE_HOST'), 
+        'PORT': config('DATABASE_PORT'),
     }
 }
 
