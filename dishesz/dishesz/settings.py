@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["patzach.com", "patzach.com", "18.191.137.57"]
 AUTH_USER_MODEL = 'users.DisheszUser'
 
 # Application definition
