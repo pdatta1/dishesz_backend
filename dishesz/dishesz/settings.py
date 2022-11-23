@@ -25,11 +25,13 @@ INSTALLED_APPS = [
     'users', 
     'recipe',
     'feeds',
+    'notify'
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders', 
     'storages',
     'channels',
+
 ]
 
 MIDDLEWARE = [
