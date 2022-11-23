@@ -11,12 +11,19 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 
 from feeds.middleware import TokenAuthMiddlewareStack
-from feeds.routing import websocket_urlpatterns 
+
+
+from websocket_routing.routing import WebSocketRouting
+from notify.consumer import NotifyConsumer
+
+# intialize websocket routing and add consumers
+websocket_router = WebSocketRouting() 
+websocket_router.add_route('notify', NotifyConsumer)
 
 application = ProtocolTypeRouter({ 
     'http': get_asgi_application(), 
     'websocket': TokenAuthMiddlewareStack( 
-        URLRouter(websocket_urlpatterns)
+        URLRouter(websocket_router.get_router())
     )
 })
 
