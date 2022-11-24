@@ -113,7 +113,7 @@ class CreateUserAPI(ViewSet):
             self.send_verification_email(user=new_user)
             return serialized_data.data 
         
-        return None 
+        return serialized_data.errors
     
 
 
@@ -122,6 +122,7 @@ class CreateUserAPI(ViewSet):
         data = request.data 
         print(f'Data: {data}')
         new_user = self.create_user(data)
+        print(f'New User Status : {new_user}')
 
           # if serialized valid
         if not new_user is None: 
