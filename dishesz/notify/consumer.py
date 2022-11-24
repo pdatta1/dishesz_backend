@@ -67,6 +67,13 @@ class NotifyConsumer(AsyncJsonWebsocketConsumer):
             await self.channel_layer.group_send(self.notify_portal_name, notify_data)
             await self.create_notification(notification_data)
 
+        if notification_type == 'echo.message': 
+            echo_data = { 
+                'type': notification_type, 
+                'data': notification_data
+            }
+            await self.send_json(echo_data)
+
 
     
     async def viewed_notification(self, content): 
@@ -78,6 +85,12 @@ class NotifyConsumer(AsyncJsonWebsocketConsumer):
     async def unviewed_notification(self, content): 
         await self.send_json({ 
             'type': content.get('type'),
+            'data': content.get('data')
+        })
+
+    async def echo_message(self, content): 
+        await self.send_json({ 
+            'type': content.get('type'), 
             'data': content.get('data')
         })
 

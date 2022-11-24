@@ -18,7 +18,7 @@ from notify.consumer import NotifyConsumer
 
 # intialize websocket routing and add consumers
 websocket_router = WebSocketRouting() 
-websocket_router.add_route('notify', NotifyConsumer)
+websocket_router.add_route('notify/', NotifyConsumer)
 
 application = ProtocolTypeRouter({ 
     'http': get_asgi_application(), 
