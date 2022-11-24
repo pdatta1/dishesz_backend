@@ -124,7 +124,7 @@ class CreateUserAPI(ViewSet):
         new_user = self.create_user(data)
 
           # if serialized valid
-        if not new_user == None: 
+        if not new_user is None: 
             return Response(status=status.HTTP_201_CREATED, data={ 
                 'message': f'Account Created, Verification Email Sent to {new_user["email"]}!'
             })
