@@ -66,8 +66,8 @@ class DisheszUserSerializer(ModelSerializer):
     password = serializers.CharField(min_length=5, max_length=24, write_only=True, required=True, allow_blank=False)
     password2 = serializers.CharField(min_length=5, max_length=24, write_only=True, required=True, allow_blank=False)
 
-    followings = DisheszUserFollowingSerializer(many=True)
-    followers = DisheszUserFollowersSerializer(many=True)
+    #followings = DisheszUserFollowingSerializer(many=True)
+    #followers = DisheszUserFollowersSerializer(many=True)
     #user_interest_container = InterestContainerSerializer()
     
     def validate(self, attrs): 
