@@ -10,7 +10,13 @@ from rest_framework.response import Response
 from rest_framework import status 
 
 from users.models import DisheszUser, DisheszUserFollowers, DisheszUserFollowing
-from users.serializers import DisheszUserSerializer, ChangeEmailAddress, ResetPasswordSerializer
+from users.serializers import ( 
+    DisheszUserSerializer, 
+    ChangeEmailAddress, 
+    ResetPasswordSerializer, 
+    DisheszUserFollowersSerializer,
+    DisheszUserFollowingSerializer
+)
 from users.verify import account_activation_token
 
 
@@ -451,6 +457,41 @@ class unFollowUserAPI(ViewSet):
 
 
 
+class UserFollowersAPI(ViewSet): 
+
+    permission_classes = (IsAuthenticated, )
+
+    def get_user_followers(self, user): 
+
+        followers = DisheszUserFollowers.objects.filter(dishesz_user=user)
+        serializer = DisheszUserFollowersSerializer(followers, many=True)
+        return serializer.data 
+
+    def list(self, request): 
+
+        user_followers = self.get_user_followers(request.user) 
+        return Response(status=status.HTTP_200_OK, data={ 
+            'followers': user_followers
+        })
+
+
+class UserFollowingAPI(ViewSet): 
+
+    permission_classes = (IsAuthenticated, )
+
+    def get_user_followings(self, user): 
+        
+        followings = DisheszUserFollowing.objects.filter(dishesz_user=user)
+        serializer = DisheszUserFollowingSerializer(followings, many=True)
+        return serializer.data 
+
+
+    def list(self, request): 
+
+        user_followings = self.get_user_following(request.user)
+        return Response(status=status.HTTP_200_OK, data={ 
+            'followings': user_followings
+        })
 
 
 

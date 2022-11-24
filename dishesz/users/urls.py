@@ -14,7 +14,9 @@ from users.views import (
     HandleForgotPassword, 
     DeleteAccountAPI,
     FollowUserAPI, 
-    unFollowUserAPI
+    unFollowUserAPI,
+    UserFollowersAPI, 
+    UserFollowingAPI,
 
     )
 
@@ -29,6 +31,8 @@ user_router.register('verify', VerifyEmail, basename='verify')
 user_router.register('delete_account', DeleteAccountAPI, basename='delete_account')
 user_router.register('follow_user', FollowUserAPI, basename='follow_user')
 user_router.register('unfollow_user', unFollowUserAPI, basename='unfollow_user')
+user_router.register('user_followers', UserFollowersAPI, basename='user_followers')
+user_router.register('user_followings', UserFollowingAPI, basename='user_followings')
 
 urlpatterns = [ 
     path('', include(user_router.urls)),
