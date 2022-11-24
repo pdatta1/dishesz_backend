@@ -75,7 +75,7 @@ CHANNEL_LAYERS = {
     }
 }
 
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': config('DATABASE_ENGINE'),
@@ -94,7 +94,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+"""
 
 
 
