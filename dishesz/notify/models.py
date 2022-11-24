@@ -20,6 +20,7 @@ class Notification(models.Model):
     description = models.CharField(max_length=128, blank=False, null=False)
     created_on = models.DateTimeField(auto_now_add=True)
     reffered = models.CharField(max_length=16, choices=REFFERED_CHOICES)
+    is_viewed = models.BooleanField(default=False)
     dishesz_user = models.ForeignKey(to='users.DisheszUser', on_delete=models.CASCADE, related_name='user_notifications')
 
     

@@ -32,3 +32,11 @@ daphne
 channels_redis
 numpy
 pandas
+pytest-asyncio 
+anyio
+pytest-asyncio
+pytest-tornasync
+pytest-trio
+pytest-twisted
+
+

@@ -36,7 +36,7 @@ class TestWebSocketConnection(object):
     async def test_can_connect_to_server(self, settings): 
 
         settings.CHANNEL_LAYERS = TEST_CHANNEL_LAYERS
-        _, access = create_user('user_test', 'user_test@gmail.com', 'user_test123')
+        _, access = await create_user('user_test', 'user_test@gmail.com', 'user_test123')
 
         communicator = WebsocketCommunicator(
             application=application, 
