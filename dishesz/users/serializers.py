@@ -85,7 +85,7 @@ class DisheszUserSerializer(ModelSerializer):
     class Meta: 
 
         model = DisheszUser
-        fields = ('username', 'email', 'password', 'password2', 'followings', 'followers', 'user_interest_container')
+        fields = ('username', 'email', 'password', 'password2',)
 
 
 
