@@ -68,7 +68,7 @@ class DisheszUserSerializer(ModelSerializer):
 
     followings = DisheszUserFollowingSerializer(many=True)
     followers = DisheszUserFollowersSerializer(many=True)
-    user_interest_container = InterestContainerSerializer(allow_blank=True, required=False)
+    user_interest_container = InterestContainerSerializer()
     
     def validate(self, attrs): 
 
