@@ -27,7 +27,7 @@ class TestUserAPI(APITestCase):
 
         data = { 
             'username': 'user11xx',
-            'email': 'emailtesft@gmail.com',
+            'email': 'emailtest@gmail.com',
             'password': 'password123',
             'password2': 'password123'
         }
