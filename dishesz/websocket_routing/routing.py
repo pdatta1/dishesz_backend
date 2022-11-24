@@ -15,9 +15,6 @@ class WebSocketRouting:
 
         if path_name is None: 
             raise ValueError(_('Path Name cannot be None'))
-        
-        if consumer is not type(AsyncJsonWebsocketConsumer): 
-            raise ValueError(_('Consumer needs to be of type AsyncJsonWebsocketConsumer'))
 
         
         route =  path(path_name, consumer.as_asgi())
