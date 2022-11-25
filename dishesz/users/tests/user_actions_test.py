@@ -31,7 +31,7 @@ class TestUserAPI(APITestCase):
             'password': 'password123',
             'password2': 'password123'
         }
-        request = self.client.post(reverse('create_user-list'), data)
+        request = self.client.post(reverse('users:create_user-list'), data)
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
