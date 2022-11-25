@@ -6,6 +6,7 @@ from rest_framework import status
 
 
 from django.urls import reverse
+from django.shortcuts import reverse 
 from django.contrib.auth import get_user_model
 
 import pytest 
@@ -16,8 +17,8 @@ class TestUserAPI(APITestCase):
     def setUp(self): 
 
         self.url = [ 
-            '/users/create_user/', 
-            '/users/change_email/',
+            'users/create_user/', 
+            'users/change_email/',
         ]
         self.User = get_user_model().objects.create_user(username='admin', email='testing@gmail.com', password='password123')
 

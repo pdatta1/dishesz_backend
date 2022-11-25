@@ -28,12 +28,14 @@ class NotifyConsumer(AsyncJsonWebsocketConsumer):
 
         # if not, create portal name and load notifications
         else: 
+            
+            await self.accept() 
 
             self.notify_portal_name = self.dishesz_user.username 
             await self.channel_layer.group_add(self.notify_portal_name, self.channel_name)
 
             viewed_notifications = await self.load_notifications(is_viewed=True)
-            unviewed_notifications = await self.load_notification(is_viewed=False)
+            unviewed_notifications = await self.load_notifications(is_viewed=False)
 
             self.notify_portal.append(viewed_notifications)
             self.notify_portal.append(unviewed_notifications)
