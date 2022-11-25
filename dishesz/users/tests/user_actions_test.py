@@ -5,7 +5,7 @@ from rest_framework.test import force_authenticate
 from rest_framework import status 
 
 
-from django.urls import reverse
+from django.urls import reverse 
 from django.contrib.auth import get_user_model
 
 import pytest 
@@ -31,7 +31,7 @@ class TestUserAPI(APITestCase):
             'password': 'password123',
             'password2': 'password123'
         }
-        request = self.client.post(self.url[0], data)
+        request = self.client.post(reverse('users:create_user-create'), data)
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
