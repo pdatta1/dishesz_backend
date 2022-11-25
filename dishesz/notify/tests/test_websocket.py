@@ -40,7 +40,7 @@ class TestWebSocketConnection(object):
 
         communicator = WebsocketCommunicator(
             application=application, 
-            path=f'notify/?token={access}'
+            path=f'/ws/notify/?token={access}'
         )
 
         connected, _ = await communicator.connect() 

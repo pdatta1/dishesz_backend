@@ -34,6 +34,9 @@ user_router.register('unfollow_user', unFollowUserAPI, basename='unfollow_user')
 user_router.register('user_followers', UserFollowersAPI, basename='user_followers')
 user_router.register('user_followings', UserFollowingAPI, basename='user_followings')
 
+
+app_name = 'users'
+
 urlpatterns = [ 
     path('', include(user_router.urls)),
     path('access/', TokenObtainPairView.as_view(), name='access'),

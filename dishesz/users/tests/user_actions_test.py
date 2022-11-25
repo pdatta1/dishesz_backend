@@ -16,8 +16,8 @@ class TestUserAPI(APITestCase):
     def setUp(self): 
 
         self.url = [ 
-            '/users/create_user/', 
-            '/users/change_email/',
+            'users/create_user/', 
+            'users/change_email/',
         ]
         self.User = get_user_model().objects.create_user(username='admin', email='testing@gmail.com', password='password123')
 
