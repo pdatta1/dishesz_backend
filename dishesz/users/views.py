@@ -8,6 +8,7 @@ from rest_framework.viewsets import (
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response 
 from rest_framework import status 
+from rest_framework.decorators import action 
 
 from users.models import DisheszUser, DisheszUserFollowers, DisheszUserFollowing
 from users.serializers import ( 
@@ -123,6 +124,7 @@ class CreateUserAPI(ViewSet):
     
 
 
+    @action(details=True, method=['post'])
     def create(self, request): 
 
         data = request.data 
