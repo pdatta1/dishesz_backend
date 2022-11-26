@@ -16,8 +16,8 @@ class TestUserAPI(APITestCase):
     def setUp(self): 
 
         self.url = [ 
-            'users/create_user/', 
-            'users/change_email/',
+            reverse('users:create-user-list'),
+            reverse('users:change_email-list')
         ]
         self.User = get_user_model().objects.create_user(username='admin', email='testing@gmail.com', password='password123')
 
@@ -31,7 +31,7 @@ class TestUserAPI(APITestCase):
             'password': 'password123',
             'password2': 'password123'
         }
-        request = self.client.post('/users/create_user/', data)
+        request = self.client.post(self.url[0], data, follow=True)
         self.assertEqual(request.status_code, status.HTTP_201_CREATED)
 
 
@@ -41,6 +41,6 @@ class TestUserAPI(APITestCase):
             "email": "cattabaah@gmail.com", 
             "email2": "cattabaah@gmail.com"
         }
-        request = self.client.post(self.url[1], data)
+        request = self.client.post(self.url[1], data, follow=True)
         self.assertEqual(request.status_code, status.HTTP_200_OK)
 
