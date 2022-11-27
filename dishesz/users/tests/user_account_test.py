@@ -1,6 +1,5 @@
 
 from rest_framework.test import APITestCase
-from rest_framework.test import force_authenticate
 from rest_framework import status 
 
 
@@ -39,10 +38,8 @@ class TestUserAPI(APITestCase):
         request = self.client.post(self.url['login_user'], data)
 
 
-        decode_dict = json.loads(request.content.decode("UTF-8"))
-        
-
-        token = decode_dict["access"]
+        #decode_dict = json.loads(request.content.decode("UTF-8"))
+        token = request.data["access"]
 
         if token is None: 
             raise ValueError(_('Token is None'))
