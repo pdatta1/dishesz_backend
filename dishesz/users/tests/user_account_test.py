@@ -35,7 +35,7 @@ class TestUserAPI(APITestCase):
 
         self.client.force_login(user=user)
 
-        request = self.client.post(self.url['login_user'], data)
+        request = self.client.post(self.url['login_user'], data, follow=True)
 
 
         #decode_dict = json.loads(request.content.decode("UTF-8"))
