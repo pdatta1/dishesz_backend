@@ -9,7 +9,7 @@ from django.utils.translation import gettext as _
 from django.contrib.auth import get_user_model
 
 import pytest 
-import ast 
+import json 
 
 @pytest.mark.django_db
 class TestUserAPI(APITestCase): 
@@ -39,10 +39,10 @@ class TestUserAPI(APITestCase):
         request = self.client.post(self.url['login_user'], data)
 
 
-        decode_dict = request.content.decode("UTF-8")
-        token_dict = ast.literal_eval(decode_dict)
+        decode_dict = json.loads(request.content.decode("UTF-8"))
+        
 
-        token = token_dict["access"]
+        token = decode_dict["access"]
 
         if token is None: 
             raise ValueError(_('Token is None'))
