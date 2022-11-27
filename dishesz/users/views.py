@@ -124,7 +124,6 @@ class CreateUserAPI(ViewSet):
     
 
 
-    @action(details=True, method=['post'])
     def create(self, request): 
 
         data = request.data 
