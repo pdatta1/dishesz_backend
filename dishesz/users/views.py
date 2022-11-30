@@ -19,7 +19,7 @@ from users.serializers import (
     DisheszUserFollowingSerializer
 )
 from users.verify import account_activation_token
-
+from users.permissions import IsOwner
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import get_user_model
@@ -120,16 +120,17 @@ class CreateUserAPI(ViewSet):
             self.send_verification_email(user=new_user)
             return serialized_data.data 
         
-        return serialized_data.errors
+        return None 
     
 
 
     def create(self, request): 
 
         data = request.data 
-        print(f'Data: {data}')
+        #print(f'Data: {data}')
+        
         new_user = self.create_user(data)
-        print(f'New User Status : {new_user}')
+        #print(f'New User Status : {new_user}')
 
           # if serialized valid
         if not new_user is None: 
@@ -158,7 +159,7 @@ class VerifyEmail(ViewSet):
             return user 
         return None 
 
-    def list(self, request): 
+    def create(self, request): 
 
         requested_data = request.data 
         _uid = requested_data['uid']
@@ -234,13 +235,25 @@ class HandleForgotPassword(ViewSet):
         msg.send()
 
         return user 
+
+    def verify_email_exists(self, email): 
+
+        if DisheszUser.objects.filter(email=email).exists(): 
+            return True 
+        return False 
        
 
 
     def create(self, request): 
-        reset_data = self.send_password_reset_link(request.data['email'])
-        return Response(status=status.HTTP_200_OK, data={
-            'message': f'Email sent to {reset_data.username}',
+        
+        if self.verify_email_exists(request.data['email']): 
+            reset_data = self.send_password_reset_link(request.data['email'])
+            return Response(status=status.HTTP_200_OK, data={
+                'message': f'Email sent to {reset_data.username}',
+            })
+
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={ 
+            'message': f'Dishesz cannot find an account with the email {request.data["email"]}'
         })
 
 
@@ -286,6 +299,9 @@ class ResetPasswordAPI(ViewSet):
                 user_account.set_password(new_password)
                 user_account.save() 
                 return user_account
+
+
+        return None 
 
 
 

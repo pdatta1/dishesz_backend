@@ -63,8 +63,8 @@ class DisheszUserSerializer(ModelSerializer):
     username = serializers.CharField(min_length=4, max_length=16, allow_blank=False, required=True, validators=[UniqueValidator(DisheszUser.objects.all())])
     email = serializers.EmailField(required=True, validators=[UniqueValidator(DisheszUser.objects.all())])
 
-    password = serializers.CharField(min_length=5, max_length=24, write_only=True, required=True, allow_blank=False)
-    password2 = serializers.CharField(min_length=5, max_length=24, write_only=True, required=True, allow_blank=False)
+    password = serializers.CharField(min_length=8, max_length=24, write_only=True, required=True, allow_blank=False)
+    password2 = serializers.CharField(min_length=8, max_length=24, write_only=True, required=True, allow_blank=False)
 
     #followings = DisheszUserFollowingSerializer(many=True)
     #followers = DisheszUserFollowersSerializer(many=True)

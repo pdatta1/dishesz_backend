@@ -101,6 +101,10 @@ class EstablishUserInterestAPI(ViewSet):
             interest = self.add_multiple_interest(container=user_container, interest_list=requested_data)
             _dict, _status = display_generic_green_status(f'interests added {interest}')
             return Response(status=_status, data=_dict)
+
+
+        _dict, _status = display_generic_red_status(f'Error Adding Interests')
+        return Response(status=_status, data=_dict)
                  
 
     

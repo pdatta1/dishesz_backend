@@ -34,9 +34,9 @@ class Recipe(models.Model):
     prep_time = models.CharField(max_length=16, blank=False, null=False)
     cook_time = models.CharField(max_length=16, blank=False, null=False)
     directions = models.CharField(max_length=512, blank=False, null=False)
-    created_on = models.DateTimeField()
+    created_on = models.DateTimeField(auto_now_add=timezone.now())
 
-    category = models.CharField(max_length=16, choices=RECIPE_CATEGORIES, null=False, default=RECIPE_CATEGORIES[0])
+    category = models.CharField(max_length=16, choices=RECIPE_CATEGORIES, null=False, default=RECIPE_CATEGORIES[0][0])
 
     author = models.ForeignKey(to=DisheszUser, on_delete=models.CASCADE, related_name='user_recipes')
 

@@ -22,6 +22,7 @@ recipe_router.register('delete_recipe_photo', DeletePhotoAssignAPI, basename='de
 recipe_router.register('save_recipe', SavedRecipe, basename='save_recipe')
 recipe_router.register('get_saved_recipes', MySavedRecipesAPI, basename='get_saved_recipes')
 
+app_name = 'recipes'
 urlpatterns = [ 
     path('', include(recipe_router.urls)),
 ]

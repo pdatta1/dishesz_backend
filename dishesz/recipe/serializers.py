@@ -63,11 +63,12 @@ class RecipeSerializer(ModelSerializer):
     prep_time = serializers.CharField(max_length=24, allow_blank=False, required=True)
     cook_time = serializers.CharField(max_length=24, allow_blank=False, required=True)
     directions = serializers.CharField(min_length=24, max_length=512, allow_blank=False, required=True)
+    category = serializers.CharField(max_length=15, allow_blank=False)
 
     ingredients = IngredientSerializers(many=True)
-    photos = PhotoSerializer(many=True)
+    photos = PhotoSerializer(read_only=True, many=True)
     recipe_reviews = ReviewSerializer(read_only=True, many=True)
-    saved_recipes = SavedRecipesSerializer(many=True)
+    saved_recipes = SavedRecipesSerializer(read_only=True, many=True)
 
     author = serializers.ReadOnlyField(source='author.username')
     created_on = serializers.ReadOnlyField() 
@@ -76,11 +77,10 @@ class RecipeSerializer(ModelSerializer):
     def create(self, validated_data): 
 
         # pop request data
-        recipe_data = validated_data.pop('recipe')
         ingredient_data = validated_data.pop('ingredients')
 
         # create recipe
-        recipe = Recipe.objects.create(**recipe_data)
+        recipe = Recipe.objects.create(**validated_data)
 
         # assign nested data 
         for data in ingredient_data: 
@@ -90,10 +90,13 @@ class RecipeSerializer(ModelSerializer):
         recipe.save() 
         return recipe 
         
+
     class Meta: 
         model = Recipe
-        fields = ('id', 'recipe_name', 'recipe_description', 'prep_time', 'cook_time', 'directions', 'photos', 'ingredients', 'recipe_reviews', 'author','created_on', 'saved_recipes')
-
+        fields = ('id', 'recipe_name', 'recipe_description', 
+                    'prep_time', 'cook_time', 'directions', 'photos', 
+                        'ingredients', 'recipe_reviews', 'author','created_on', 
+                            'saved_recipes', 'category')
 
 
 

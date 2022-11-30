@@ -10,7 +10,7 @@ from rest_framework import parsers
 from recipe.models import  Recipe, Photo, Review, SavedRecipes 
 from recipe.serializers import  PhotoSerializer, RecipeSerializer
 
-
+from users.permissions import IsOwner
 
 class ViewRecipeViewSet(ReadOnlyModelViewSet): 
     """
@@ -74,6 +74,8 @@ class DeletePhotoAssignAPI(ViewSet):
         Allows Authenticated User to Delete existing photo 
     """
 
+    permission_classes = (IsOwner, )
+
     def delete_photo(self, photo_id): 
         """
             Fetch existing photos and delete 
@@ -114,8 +116,9 @@ class LeaveReview(ViewSet):
         """
         
         # retrieve recipe id from review_data(dict) and get recipe by id
-        recipe_id = review_data.pop('recipe')
+        recipe_id = review_data['recipe_id']
         recipe = Recipe.objects.get(id=recipe_id)
+
 
         # create review and return review
         review = Review.objects.create(author=user, recipe=recipe, **review_data)
@@ -170,7 +173,7 @@ class SavedRecipe(ViewSet):
 
 class MySavedRecipesAPI(ViewSet): 
 
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsOwner, )
 
     def get_saved_recipes(self, user): 
         try: 
