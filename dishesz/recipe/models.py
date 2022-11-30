@@ -48,6 +48,14 @@ class Ingredient(models.Model):
     ingredient = models.CharField(max_length=32, blank=False, null=False)
 
 
+class IngredientAvailableAt(models.Model): 
+
+    ingredient = models.ForeignKey('recipe.Ingredient', on_delete=models.CASCADE, related_name='available_at')
+    store_name = models.CharField(max_length=24, null=False, blank=False)
+    store_price = models.DecimalField(max_digits=5, decimal_places=2, default=None)
+    store_link = models.URLField(max_length=300, blank=True, null=True)
+
+
 class Photo(models.Model): 
 
     recipe = models.ForeignKey(to=Recipe, on_delete=models.CASCADE, related_name='photos')

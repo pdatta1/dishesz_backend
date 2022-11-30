@@ -94,9 +94,17 @@ class TestRecipeActions(APITestCase):
             "prep_time": "10mins",
             "cook_time": "10mins",
             "directions": "testing testing testing testing testing testing testing testing",
+            "category": "spicy",
             "ingredients": [
                 { 
-                "ingredient": "peppers" 
+                "ingredient": "peppers",
+                "available_at": [
+                    {
+                        "store_name": "Walmart",
+                        "store_price": 19.99,
+                        "store_link": "https://www.walmart.com/ip/Fresh-Green-Bell-Pepper-Each/44390945?athbdg=L1200"
+                    },
+                ]
                 },
             ],
         }
