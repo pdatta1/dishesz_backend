@@ -186,10 +186,3 @@ class GenerateUserFeeds(ViewSet):
 
             
 
-
-
-class GenerateExploreFeeds(ViewSet): 
-
-    permission_classes = (AllowAny, )
-
-    
