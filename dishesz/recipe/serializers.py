@@ -16,12 +16,12 @@ from recipe.models import (
 class PhotoSerializer(ModelSerializer): 
 
     recipe = serializers.ReadOnlyField(source='recipe.recipe_name')
-    photo = serializers.ImageField()
+    src = serializers.ImageField()
 
 
     class Meta: 
         model = Photo
-        fields = ('photo', 'recipe' )
+        fields = ('src', 'recipe' )
 
 
 class IngredientAvailableAtSerializer(ModelSerializer): 
