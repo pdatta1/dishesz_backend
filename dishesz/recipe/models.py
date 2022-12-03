@@ -59,7 +59,7 @@ class IngredientAvailableAt(models.Model):
 class Photo(models.Model): 
 
     recipe = models.ForeignKey(to=Recipe, on_delete=models.CASCADE, related_name='photos')
-    src = models.ImageField(null=True, upload_to=f'uploads/{photo_path}')
+    src = models.ImageField(upload_to=f'uploads/{photo_path}')
 
 
 class Review(models.Model): 
