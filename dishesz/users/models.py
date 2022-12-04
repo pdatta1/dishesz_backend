@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone 
 
 from users.manager import DisheszUserManager
+from recipe.utils import photo_path
+
+from decouple import config 
 
 
 
@@ -27,6 +30,27 @@ class DisheszUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'username'
     objects = DisheszUserManager() 
+
+
+class DisheszUserProfile(models.Model): 
+
+    """
+        Defining the DisheszUserProfile which consists of the user profile pic, date of birth and etc.
+    """
+    dishesz_user = models.OneToOneField(to=DisheszUser, on_delete=models.CASCADE, related_name='user_profile')
+    profile_pic = models.ImageField(upload_to=f'profile/{photo_path}')
+    profile_status = models.BooleanField(default=False)
+
+    def get_profile_status(self): 
+        return self.profile_status 
+
+    def get_profile_pic_src(self): 
+        if not self.profile_pic: 
+            return config('DEFAULT_USER_PROFILE_PIC')
+        return self.profile_pic.url 
+
+    def __str__(self): 
+        return f'{self.dishesz_user.username} Profile'
 
 
 class DisheszUserFollowing(models.Model): 

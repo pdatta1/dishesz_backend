@@ -84,6 +84,7 @@ class RecipeSerializer(ModelSerializer):
     saved_recipes = SavedRecipesSerializer(read_only=True, many=True)
 
     author = serializers.ReadOnlyField(source='author.username')
+    profile_pic = serializers.ReadOnlyField(source='author.user_profile.get_profile_pic_src')
     created_on = serializers.ReadOnlyField() 
 
 
@@ -121,7 +122,7 @@ class RecipeSerializer(ModelSerializer):
         fields = ('id', 'recipe_name', 'recipe_description', 
                     'prep_time', 'cook_time', 'directions', 'photos', 
                         'ingredients', 'recipe_reviews', 'author','created_on', 
-                            'saved_recipes', 'category')
+                            'saved_recipes', 'category', 'profile_pic',)
 
 
 

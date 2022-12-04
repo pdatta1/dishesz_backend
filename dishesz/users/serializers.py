@@ -9,13 +9,25 @@ from django.utils.translation import gettext_lazy as _
 
 from users.models import ( 
     DisheszUser, 
+    DisheszUserProfile,
     DisheszUserFollowers, 
     DisheszUserFollowing, 
     InterestContainer, 
     Interest,
+
 )
 
 
+class DisheszUserProfileSerializer(ModelSerializer): 
+
+    dishesz_user = serializers.ReadOnlyField(source='dishesz_user.username')
+    profile_pic = serializers.ImageField()
+    profile_status = serializers.ReadOnlyField() 
+
+    class Meta: 
+        model = DisheszUserProfile
+        fields = ('dishesz_user', 'profile_pic', 'profile_status')
+        
 
 class DisheszUserFollowingSerializer(ModelSerializer): 
 
