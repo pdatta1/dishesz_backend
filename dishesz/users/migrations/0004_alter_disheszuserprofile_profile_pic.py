@@ -8,9 +8,11 @@ def fill_user_profile(apps, schema_editor):
     User = apps.get_model('users', 'DisheszUser')
     Profile = apps.get_model('users', 'DisheszUserProfile')
     for user in User.objects.all(): 
-        profile = Profile.objects.create(dishesz_user=user)
-        user.user_profile = profile 
-        user.save() 
+
+        if not hasattr(user, 'user_profile'):
+            profile = Profile.objects.create(dishesz_user=user)
+            user.user_profile = profile 
+            user.save() 
 
 
 class Migration(migrations.Migration):
