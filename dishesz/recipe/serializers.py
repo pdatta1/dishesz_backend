@@ -55,6 +55,7 @@ class ReviewSerializer(ModelSerializer):
     description = serializers.CharField(style={'base_template': 'textarea.html'}, max_length=125, allow_blank=False)
     
     author = serializers.ReadOnlyField(source='author.username')
+    profile_pic = serializers.ReadOnlyField(source='author.user_profile.get_profile_pic_src')
 
 
     class Meta: 
