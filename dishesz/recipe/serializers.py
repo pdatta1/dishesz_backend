@@ -60,7 +60,7 @@ class ReviewSerializer(ModelSerializer):
 
     class Meta: 
         model = Review
-        fields = ('recipe', 'rating', 'description', 'author', 'profile', )
+        fields = ('recipe', 'rating', 'description', 'author', 'profile_pic', )
 
 class SavedRecipesSerializer(ModelSerializer): 
 
