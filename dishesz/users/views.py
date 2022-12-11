@@ -80,6 +80,7 @@ class DisheszUserAPI(ReadOnlyModelViewSet):
 class CreateUserAPI(ViewSet): 
 
     permission_classes = (AllowAny, )
+    ERROR = False 
 
 
     def send_verification_email(self, user): 
@@ -120,7 +121,8 @@ class CreateUserAPI(ViewSet):
             self.send_verification_email(user=new_user)
             return serialized_data.data 
         
-        return None 
+        self.ERROR = True 
+        return serialized_data.error_messages
     
 
 
@@ -133,12 +135,13 @@ class CreateUserAPI(ViewSet):
         #print(f'New User Status : {new_user}')
 
           # if serialized valid
-        if not new_user is None: 
+        if not self.ERROR: 
             return Response(status=status.HTTP_201_CREATED, data={ 
                 'message': f'Account Created, Verification Email Sent to {new_user["email"]}!'
             })
         return Response(status=status.HTTP_400_BAD_REQUEST, data={ 
-            'message': 'Error Creating User'
+            'message': 'Error Creating User',
+            'errors': new_user
         })
         
 
