@@ -10,7 +10,7 @@ SECRET_KEY = config('SECRET_KEY')
 ENV_NAME = config('ENV_NAME')
 DEBUG = True
 
-ALLOWED_HOSTS = ["scrapnc.com", "www.scrapnc.com", "18.191.137.57", "127.0.0.1", "testserver"]
+ALLOWED_HOSTS = ["scrapnc.com", "www.scrapnc.com", "18.191.137.57", "127.0.0.1", "testserver", "192.168.1.200"]
 AUTH_USER_MODEL = 'users.DisheszUser'
 
 # Application definition
@@ -171,7 +171,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
     'http://192.168.1.200:3000',
+    'http://192.168.1.200:3001',
+
 ]
 
 CORS_ALLOW_HEADERS = [

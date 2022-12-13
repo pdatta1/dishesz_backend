@@ -2,7 +2,7 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status 
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 from django.utils.translation import gettext_lazy as _
 
@@ -16,8 +16,6 @@ from recipe.models import Recipe
 from recipe.serializers import RecipeSerializer
 
 
-from numpy.random import shuffle
-import random 
 
 
 class EstablishUserInterestAPI(ViewSet): 

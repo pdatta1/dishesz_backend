@@ -144,6 +144,7 @@ class TestRecipeActions(APITestCase):
             "prep_time": "10mins",
             "cook_time": "10mins",
             "directions": "testing testing testing testing testing testing testing testing",
+            "category": "spicy"
         }
 
         recipe = Recipe.objects.create(author=self.User, **recipe_data)
@@ -155,7 +156,7 @@ class TestRecipeActions(APITestCase):
         photo = open(photo_file, 'rb')
         photo_data = { 
             "recipe_id": recipe.id,
-            "photo": photo  
+            "src": photo  
         }
 
 

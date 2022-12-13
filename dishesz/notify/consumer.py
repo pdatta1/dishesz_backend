@@ -103,7 +103,7 @@ class NotifyConsumer(AsyncJsonWebsocketConsumer):
         container = [] 
 
         if self.dishesz_user is None: 
-            raise ValueError()
+            raise ValueError(_('Dishesz user is None, cannot pull notification anonymnous user'))
         get_notifications = Notification.objects.filter(dishesz_user=self.dishesz_user, is_viewed=is_viewed)
 
         for data in get_notifications: 
