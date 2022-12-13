@@ -9,6 +9,7 @@ from rest_framework import parsers
 
 from recipe.models import  Recipe, Photo, Review, SavedRecipes 
 from recipe.serializers import  PhotoSerializer, RecipeSerializer
+from recipe.pagination import RecipeViewPagination
 
 from users.permissions import IsOwner
 
@@ -20,6 +21,7 @@ class ViewRecipeViewSet(ReadOnlyModelViewSet):
     queryset = Recipe.objects.all() 
     serializer_class = RecipeSerializer
     permission_classes = (AllowAny, )
+    pagination_class = RecipeViewPagination
 
     
 
