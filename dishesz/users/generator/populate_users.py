@@ -100,7 +100,7 @@ def populate_recipe_data():
         recipes = json.loads(data)
 
         for recipe in recipes: 
-            random_id = random.choice(get_all_users_id)
+            random_id = random.choice(get_all_users_id())
             user = DisheszUser.objects.get(id=random_id)
             Recipe.objects.create(author=user, **recipe)
             progress += 1
