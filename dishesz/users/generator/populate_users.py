@@ -162,7 +162,7 @@ def populate_recipe_data():
 
             requests.post('https://scrapnc.com/recipe/assign_recipe_photos', photo_data, {
                 'Content-Type': 'multipart/form-data',
-                'Authorization': f'Bearer {token}'
+                #'Authorization': f'Bearer {token}'
             })
             progress += 1
             print(f'Progress at {progress}%')
@@ -176,6 +176,7 @@ def run_generator():
 
     print('Cleaning Database')
     cleanup_database() 
+    generate_fake_users() 
     populate_recipe_data()
 
 
