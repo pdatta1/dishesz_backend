@@ -22,11 +22,15 @@ def get_user_token():
     }
 
     token = requests.post('https://scrapnc.com/users/access/', data, { 
-         'Content-Type': 'multipart/form-data'
+         'Content-Type': 'application/json'
     })
 
-    response_data = json.loads(token.text)
-    return response_data['access']
+    if token.status_code == 200:
+
+        response_data = json.loads(token.text)
+        return response_data['access']
+
+    return token.status_code
 
 
 def cleanup_database(): 
@@ -166,6 +170,8 @@ def run_generator():
     print('Cleaning Database')
     cleanup_database() 
     populate_recipe_data()
+
+
 
    
 

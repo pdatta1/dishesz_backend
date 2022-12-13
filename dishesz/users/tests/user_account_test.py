@@ -12,7 +12,6 @@ from django.utils.encoding import force_bytes, force_str
 from users.verify import account_activation_token
 
 import pytest 
-import json 
 
 @pytest.mark.django_db
 class TestUserAPI(APITestCase): 
