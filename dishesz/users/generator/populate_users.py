@@ -64,6 +64,13 @@ def get_all_recipe_id():
 
     return id_list
 
+def get_all_users_id(): 
+    id_list = [] 
+    users = DisheszUser.objects.all() 
+    for user in users: 
+        id_list.append(user)
+
+    return id_list
 
 def get_all_ingredients_id(): 
 
@@ -93,7 +100,7 @@ def populate_recipe_data():
         recipes = json.loads(data)
 
         for recipe in recipes: 
-            random_id = random.randint(1, 999)
+            random_id = random.choice(get_all_users_id)
             user = DisheszUser.objects.get(id=random_id)
             Recipe.objects.create(author=user, **recipe)
             progress += 1
