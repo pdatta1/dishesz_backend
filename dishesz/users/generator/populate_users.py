@@ -21,7 +21,7 @@ def get_user_token():
         'password': 'usertest123',
     }
 
-    token = requests.post('http://192.168.1.200:8000/users/access/', data, { 
+    token = requests.post('https://scrapnc.com/users/access/', data, { 
          'Content-Type': 'multipart/form-data'
     })
 
@@ -149,7 +149,7 @@ def populate_recipe_data():
                 'src': photo_file
             }
 
-            requests.post('http://192.168.1.200:8000/recipe/assign_recipe_photos', photo_data, {
+            requests.post('https://scrapnc.com/recipe/assign_recipe_photos', photo_data, {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': f'Bearer {token}'
             })
