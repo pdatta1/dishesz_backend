@@ -38,5 +38,7 @@ pytest-asyncio
 pytest-tornasync
 pytest-trio
 pytest-twisted
+requests
+jsonlib
 
 
