@@ -68,7 +68,7 @@ def get_all_users_id():
     id_list = [] 
     users = DisheszUser.objects.all() 
     for user in users: 
-        id_list.append(user)
+        id_list.append(user.id)
 
     return id_list
 
