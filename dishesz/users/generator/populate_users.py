@@ -57,33 +57,27 @@ def generate_fake_users():
 
 def get_all_recipe_id(): 
      
-    id_list = [] 
     recipes = Recipe.objects.all()
     for recipe in recipes: 
-        id_list.append(recipe.id)
+        yield recipe.id 
 
-    return id_list
 
 def get_all_users_id(): 
-    id_list = [] 
+
     users = DisheszUser.objects.all() 
     for user in users: 
-        id_list.append(user.id)
+        yield user.id
 
-    return id_list
 
 def get_all_ingredients_id(): 
 
-    ids = [] 
     ingredients = Ingredient.objects.all() 
     for ing in ingredients: 
-        ids.append(ing.id)
+        yield ing.id 
 
-    return ids 
 
 def populate_recipe_data(): 
 
-    token = get_user_token() 
 
     module_dir = os.path.dirname(dishesz_user.__file__)
     recipe_dir = os.path.join(module_dir, 'generator/recipes.json')
@@ -174,11 +168,13 @@ def populate_recipe_data():
 
 def run_generator(): 
 
-    print('Cleaning Database')
-    cleanup_database() 
-    generate_fake_users() 
-    populate_recipe_data()
-
+    #print('Cleaning Database')
+    #cleanup_database() 
+    #generate_fake_users() 
+    #populate_recipe_data()
+    
+    for recipe in get_all_recipe_id():
+        print(recipe)
 
 
    

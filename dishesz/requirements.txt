@@ -39,5 +39,6 @@ pytest-tornasync
 pytest-trio
 pytest-twisted
 requests
+progress
 
 

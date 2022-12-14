@@ -508,7 +508,7 @@ class UserFollowingAPI(ViewSet):
 
     def list(self, request): 
 
-        user_followings = self.get_user_following(request.user)
+        user_followings = self.get_user_followings(request.user)
         return Response(status=status.HTTP_200_OK, data={ 
             'followings': user_followings
         })

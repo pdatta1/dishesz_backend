@@ -61,6 +61,9 @@ class Photo(models.Model):
     recipe = models.ForeignKey(to=Recipe, on_delete=models.CASCADE, related_name='photos')
     src = models.ImageField(upload_to=f'uploads/{photo_path}')
 
+    def __str__(self): 
+        return f'{self.recipe.recipe_name} Photos'
+
 
 class Review(models.Model): 
 
