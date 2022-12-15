@@ -35,6 +35,7 @@ from django.utils.translation import gettext_lazy as _
 
 from decouple import config 
 import random
+import math 
 
 
 def get_user(username):
@@ -556,10 +557,31 @@ class SuggestPeopleToFollow(GenericViewSet):
             yield response_data
 
 
+
     def list(self, request): 
 
         people_to_follow = list(self.get_users_with_similar_interests())
 
+        length_of_people = len(people_to_follow)
+
+        if length_of_people == 0:
+            return Response(status=status.HTTP_200_OK, data={
+                'data': 'no usernames available to follow'
+            })
+
+        if length_of_people == 1 or length_of_people == 2: 
+            return Response(status=status.HTTP_200_OK, data={
+                'data': people_to_follow
+            })
+
+        if length_of_people > 2 and length_of_people <= 10: 
+            max_people = 10
+            max_display_people = random.sample(people_to_follow, max_people)
+            return Response(status=status.HTTP_200_OK, data={
+                'data': max_display_people
+            })
+
+        
         max_people = 10
         max_display_people = random.sample(people_to_follow, max_people)
 
