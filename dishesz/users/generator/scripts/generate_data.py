@@ -9,8 +9,22 @@ from urllib import request
 
 from django.core.files import File 
 
-from users.models import DisheszUser, DisheszUserFollowing, DisheszUserFollowers
-from recipe.models import Recipe, Ingredient, IngredientAvailableAt, Photo
+from users.models import ( 
+    DisheszUser, 
+    DisheszUserFollowing, 
+    DisheszUserFollowers,
+    InterestContainer,
+    Interest,
+)
+from recipe.models import ( 
+    Recipe, 
+    Ingredient, 
+    IngredientAvailableAt, 
+    Photo, 
+    Review, 
+    SavedRecipes,
+)
+from users.generator.scripts.interests import interests
 import users as dishesz_user
 
 from progress.bar import Bar 
@@ -131,6 +145,56 @@ class GenerateData(object):
                 progress.next() 
             progress.finish() 
 
+    def generate_reviews(self, file_directory): 
+        
+        file_module = os.path.join(self.module_dir, file_directory)
+
+        with open(file_module, 'r') as review_file: 
+
+            data = review_file.read() 
+            reviews = json.loads(data)
+            progress = Bar('Generating Review Data', max=len(reviews))
+
+
+            for review in reviews: 
+
+                user_id = random.choice(list(self.get_all_users_ids()))
+                recipe_id = random.choice(list(self.get_all_recipes_ids()))
+
+                reviewer = DisheszUser.objects.get(id=user_id)
+                recipe = Recipe.objects.get(id=recipe_id)
+
+                Review.objects.create(recipe=recipe, author=reviewer, **review)
+
+                progress.next()
+            progress.finish()
+
+    def generate_saved_recipes(self): 
+
+        recipes = list(self.get_all_recipes())
+        users = DisheszUser.objects.all() 
+
+        max_saved = 50
+        progress = Bar('Generating Saved Recipes', max=len(recipes))
+
+        for user in users:
+
+            sample_saved_recipes = random.sample(recipes, max_saved)
+
+            for saved in sample_saved_recipes: 
+
+                SavedRecipes.objects.create(user=user, recipe=saved)
+
+            progress.next() 
+
+        progress.finish() 
+
+                
+
+
+
+
+
 
 
     def generate_stores(self, file_directory): 
@@ -200,7 +264,23 @@ class GenerateData(object):
         print(f'Ids Saved {id_saved}')
 
 
+    def add_user_interests(self): 
+        
+        categories = interests() 
+        max_interest = 5
+        progress = Bar("Generating User Interests", max=len(categories))
+        model_users = DisheszUser.objects.all() 
 
+        for user in model_users: 
+                
+                container = InterestContainer.objects.get(dishesz_user=user)
+                sampled_interests = random.sample(categories, max_interest)
+
+                for interest in sampled_interests: 
+                    Interest.objects.create(container=container, interest_name=interest)
+                
+                progress.next() 
+        progress.finish() 
 
     def randomize_follow(self): 
         """
@@ -246,6 +326,8 @@ class GenerateData(object):
         Photo.objects.all().delete() 
         DisheszUserFollowers.objects.all().delete()
         DisheszUserFollowing.objects.all().delete() 
+        SavedRecipes.objects.all().delete() 
+        Interest.objects.all().delete() 
 
 
     def get_all_users_ids(self): 
@@ -276,6 +358,13 @@ class GenerateData(object):
         ingredients = Ingredient.objects.all() 
         for ingredient in ingredients: 
             yield ingredient.id
+
+    
+    def get_all_recipes(self): 
+
+        recipes = Recipe.objects.all() 
+        for recipe in recipes: 
+            yield recipe 
 
 
 

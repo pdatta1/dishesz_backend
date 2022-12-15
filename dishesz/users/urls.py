@@ -17,7 +17,7 @@ from users.views import (
     unFollowUserAPI,
     UserFollowersAPI, 
     UserFollowingAPI,
-
+    SuggestPeopleToFollow,
     )
 
 
@@ -33,6 +33,7 @@ user_router.register('follow_user', FollowUserAPI, basename='follow_user')
 user_router.register('unfollow_user', unFollowUserAPI, basename='unfollow_user')
 user_router.register('user_followers', UserFollowersAPI, basename='user_followers')
 user_router.register('user_followings', UserFollowingAPI, basename='user_followings')
+user_router.register('people_to_follow', SuggestPeopleToFollow, basename='people_to_follow')
 
 
 app_name = 'users'

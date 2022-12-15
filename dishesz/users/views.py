@@ -2,6 +2,7 @@
 
 from rest_framework.viewsets import ( 
     ReadOnlyModelViewSet, 
+    GenericViewSet,
     ViewSet, 
 )
 
@@ -16,10 +17,13 @@ from users.serializers import (
     ChangeEmailAddress, 
     ResetPasswordSerializer, 
     DisheszUserFollowersSerializer,
-    DisheszUserFollowingSerializer
+    DisheszUserFollowingSerializer, 
+    InterestContainer,
+    Interest
 )
 from users.verify import account_activation_token
 from users.permissions import IsOwner
+from users.pagination import SimilarInterestsPagination
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import get_user_model
@@ -30,6 +34,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from decouple import config 
+import random
 
 
 def get_user(username):
@@ -514,6 +519,53 @@ class UserFollowingAPI(ViewSet):
         })
 
 
+class SuggestPeopleToFollow(GenericViewSet): 
+
+    permission_classes = (IsAuthenticated, )
+
+
+    def get_user_container(self): 
+        container = InterestContainer.objects.get(dishesz_user=self.request.user)
+        return container 
+
+
+    def get_user_interest(self): 
+
+        container = self.get_user_container() 
+        interests = Interest.objects.filter(container=container)
+
+        for interest in interests: 
+            yield interest.interest_name
+
+
+    
+    def get_users_with_similar_interests(self): 
+
+        similar_interests = list(self.get_user_interest())
+
+        # get all users
+
+        users = DisheszUser.objects.filter(
+            user_interest_container__interests__interest_name__in=similar_interests)
+
+        for user in users: 
+            response_data = { 
+                'username': user.username,
+                'user_id': user.id 
+            }
+            yield response_data
+
+
+    def list(self, request): 
+
+        people_to_follow = list(self.get_users_with_similar_interests())
+
+        max_people = 10
+        max_display_people = random.sample(people_to_follow, max_people)
+
+        return Response(status=status.HTTP_200_OK, data={
+            'data': max_display_people
+        })
 
 
         
