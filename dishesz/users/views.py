@@ -11,7 +11,13 @@ from rest_framework.response import Response
 from rest_framework import status 
 from rest_framework.decorators import action 
 
-from users.models import DisheszUser, DisheszUserFollowers, DisheszUserFollowing
+from users.models import ( 
+    DisheszUser, 
+    DisheszUserFollowers, 
+    DisheszUserFollowing, 
+    DisheszUserProfile
+)
+
 from users.serializers import ( 
     DisheszUserSerializer, 
     ChangeEmailAddress, 
@@ -550,9 +556,11 @@ class SuggestPeopleToFollow(GenericViewSet):
             user_interest_container__interests__interest_name__in=similar_interests)
 
         for user in users: 
+            user_profile = DisheszUserProfile.objects.get(dishesz_user=user)
             response_data = { 
                 'username': user.username,
-                'user_id': user.id 
+                'user_id': user.id,
+                'profile_pic': user_profile.get_profile_pic_src(),
             }
             yield response_data
 
