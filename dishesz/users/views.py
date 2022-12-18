@@ -9,7 +9,6 @@ from rest_framework.viewsets import (
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response 
 from rest_framework import status 
-from rest_framework.decorators import action 
 
 from users.models import ( 
     DisheszUser, 
@@ -28,8 +27,10 @@ from users.serializers import (
     Interest
 )
 from users.verify import account_activation_token
-from users.permissions import IsOwner
-from users.pagination import SimilarInterestsPagination
+
+
+from recipe.models import Recipe
+from recipe.serializers import RecipeSerializer
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import get_user_model
@@ -38,10 +39,10 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Q 
 
 from decouple import config 
 import random
-import math 
 
 
 def get_user(username):
@@ -491,9 +492,18 @@ class unFollowUserAPI(ViewSet):
 
 class UserFollowersAPI(ViewSet): 
 
+    """
+        get all followers of requested user
+    """
+
     permission_classes = (IsAuthenticated, )
 
     def get_user_followers(self, user): 
+
+        """
+            filter DisheszUserFollowers model with @param user
+            serialized model and return serialized data 
+        """
 
         followers = DisheszUserFollowers.objects.filter(dishesz_user=user)
         serializer = DisheszUserFollowersSerializer(followers, many=True)
@@ -509,10 +519,17 @@ class UserFollowersAPI(ViewSet):
 
 class UserFollowingAPI(ViewSet): 
 
+    """
+        get all followings of requested user 
+    """
+
     permission_classes = (IsAuthenticated, )
 
     def get_user_followings(self, user): 
-        
+        """
+            filter DisheszUserFollowing model with @param user
+            serialize model and return serialized data
+        """
         followings = DisheszUserFollowing.objects.filter(dishesz_user=user)
         serializer = DisheszUserFollowingSerializer(followings, many=True)
         return serializer.data 
@@ -528,16 +545,31 @@ class UserFollowingAPI(ViewSet):
 
 class SuggestPeopleToFollow(GenericViewSet): 
 
+    """
+        This class is responsible of generating an algorithm based 
+        on similar interests of users to follow
+    """
+
     permission_classes = (IsAuthenticated, )
 
 
     def get_user_container(self): 
+        """
+            get container by requested user
+            @return container 
+        """
         container = InterestContainer.objects.get(dishesz_user=self.request.user)
         return container 
 
 
     def get_user_interest(self): 
 
+        """
+            assign container variable with get_user_container method, 
+            filter all interests with assigned container variable
+
+            loop thru interests objects and yield interest name 
+        """
         container = self.get_user_container() 
         interests = Interest.objects.filter(container=container)
 
@@ -548,25 +580,61 @@ class SuggestPeopleToFollow(GenericViewSet):
     
     def get_users_with_similar_interests(self): 
 
+        """
+            get all users with similar interests as of requested user.
+
+            assign similar_interests variable to get_user_interest method -> generator to list convertion
+
+            filter all users where InterestContainer of interest model of interest_name exists in similar interests list,
+            and user cannot be of requested user 
+
+            loop in users assigned list variable
+
+            if user element isn't requested user of users list
+                get user profile of user element, set response data dict, 
+                and yield generate response_data
+        """
+
         similar_interests = list(self.get_user_interest())
 
         # get all users
 
         users = DisheszUser.objects.filter(
-            user_interest_container__interests__interest_name__in=similar_interests)
+            user_interest_container__interests__interest_name__in=similar_interests).filter(~Q(followings__dishesz_user=self.request.user))
 
         for user in users: 
-            user_profile = DisheszUserProfile.objects.get(dishesz_user=user)
-            response_data = { 
-                'username': user.username,
-                'user_id': user.id,
-                'profile_pic': user_profile.get_profile_pic_src(),
-            }
-            yield response_data
+            if not user == self.request.user:
+                user_profile = DisheszUserProfile.objects.get(dishesz_user=user)
+                response_data = { 
+                    'username': user.username,
+                    'user_id': user.id,
+                    'profile_pic': user_profile.get_profile_pic_src(),
+                }
+                yield response_data
 
 
 
     def list(self, request): 
+
+        """
+            assign people_to_follow variable to get_users_with_similar_interests method -> generator  to list convertion
+            get length of people_to_follow list
+
+            if people_to_follow list length is None: 
+                return response data of displaying 
+
+            if  people_to_follow list length is either 1 or 2: 
+                return response data of displaying
+
+            if people_to_follow list length is greater than 2 and less than 10: 
+                random sample people_to_follow list with max of 10 elements
+
+            after all, 
+                random sample people_to_follow list with max of 10 elements
+
+            the last two steps are repetitive, but somehow works, so do not TOUCH!!!!
+            without it it throw an exception. DO NOT TOUCH OR TRY TO REFACTOR THIS!!!!
+        """
 
         people_to_follow = list(self.get_users_with_similar_interests())
 
@@ -596,6 +664,139 @@ class SuggestPeopleToFollow(GenericViewSet):
         return Response(status=status.HTTP_200_OK, data={
             'data': max_display_people
         })
+
+
+class LookupUserProfile(ViewSet): 
+
+    """
+        @purpose: 
+            - LookupUserProfile allows users to view a user profile data
+              by a search of their username
+
+    """
+
+
+
+    serialized_data = {}
+
+    def add_to_serializer(self, key, value): 
+        self.serialized_data[key] = value 
+
+    def get_serialized_data(self): 
+        return self.serialized_data
+
+
+    def get_user_profile(self, user_model): 
+
+        """
+            get user profile by matching the user_model with the DisheszUserProfile dishesz_user
+            @return yield user_profile
+        """
+
+        if user_model: 
+            user_profile = DisheszUserProfile.objects.get(dishesz_user=user_model)
+            return user_profile 
+
+    
+    def get_followings(self, user_model): 
+        """
+            get the user followings by matching the user_model with the DisheszUserFollowing dishesz_user
+            @return yield generator of user.user_follow.username
+        """
+
+        followings = DisheszUserFollowing.objects.filter(dishesz_user=user_model)
+
+        for user in followings: 
+            yield user.user_follow.username
+
+
+    def get_followers(self, user_model): 
+        """
+            get the user followers by matching the user_model with the DisheszUserFollowers dishesz_user
+            @return yield generator of user.follower.username
+        """
+
+        followers = DisheszUserFollowers.objects.filter(dishesz_user=user_model)
+
+        for user in followers: 
+            yield user.follower.username
+
+    def get_interests(self, user_model): 
+
+        """
+            get the user interests by matching the user_model with the InterestContainer dishesz_user,
+            and filtering all interests that belongs to such container 
+            @return yield generator of interest.interest_name
+
+        """
+
+        container = InterestContainer.objects.get(dishesz_user=user_model)
+        if container: 
+            interests = Interest.objects.filter(container=container)
+            for interest in interests: 
+                yield interest.interest_name
+
+
+    def get_recipes(self, user_model): 
+
+        """
+            get the user recipes by matching the user_model with the Recipe author,
+            and serializing the recipes objects
+
+            @return serializer data from RecipeSerializer
+        """
+
+
+        recipes = Recipe.objects.filter(author=user_model)
+        serializer = RecipeSerializer(recipes, many=True)
+        return serializer.data 
+
+    
+    def serialized_response_data(self, user_model): 
+        """
+            assign all the getters of the LookupUserProfile class such as get_user_profile, get_followings, etc.
+            add all assigned variables to the add_to_serializer method with the params: (key, value)
+        """
+
+        user_profile = self.get_user_profile(user_model)
+        user_followings = list(self.get_followings(user_model))
+        user_followers = list(self.get_followers(user_model))
+        user_interests = list(self.get_interests(user_model))
+        user_recipes = self.get_recipes(user_model)
+
+        print(user_followers)
+
+        self.add_to_serializer("username", user_model.username)
+        self.add_to_serializer("profile_pic", user_profile.get_profile_pic_src())
+        self.add_to_serializer("followings", user_followings)
+        self.add_to_serializer("followers", user_followers)
+        self.add_to_serializer("interests", user_interests)
+        self.add_to_serializer("recipes", user_recipes)
+
+
+    
+    def create(self, request): 
+
+        """
+            retrieve username from requested data,
+            get user model from get_user method with params of retrieved username variable
+            if username is not undefined or none 
+            call serialized_response_data method to serialized reponse data of user model
+            return response data with status 200
+        """
+
+        username = request.data["username"]
+        user = get_user(username=username)
+
+        if username: 
+            self.serialized_response_data(user_model=user)
+            return Response(status=status.HTTP_200_OK, data={ 
+                'user_profile': self.get_serialized_data()
+            })
+
+
+
+    
 
 
         

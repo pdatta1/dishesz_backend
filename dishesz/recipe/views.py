@@ -13,6 +13,7 @@ from recipe.pagination import RecipeViewPagination
 
 from users.permissions import IsOwner
 
+
 class ViewRecipeViewSet(ReadOnlyModelViewSet): 
     """
          Displays all recipes data
@@ -23,7 +24,6 @@ class ViewRecipeViewSet(ReadOnlyModelViewSet):
     permission_classes = (AllowAny, )
     pagination_class = RecipeViewPagination
 
-    
 
 
 
