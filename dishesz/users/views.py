@@ -545,10 +545,23 @@ class UserFollowingAPI(ViewSet):
 
 class CheckInterestPicked(ViewSet): 
 
+    def check_user_interests(self): 
+
+        container = InterestContainer.objects.get(dishesz_user=self.request.user)
+        interests = Interest.objects.filter(container=container)
+
+        if(interests): 
+            return True 
+
     def check_profile_status(self): 
 
         user = get_user(self.request.user.username)
         profile = DisheszUserProfile.objects.get(dishesz_user=user)
+
+        if self.check_user_interests(): 
+            profile.profile_status = True 
+            profile.save() 
+
         return profile.get_profile_status() 
 
     def list(self, request):
@@ -557,6 +570,30 @@ class CheckInterestPicked(ViewSet):
         return Response(status=status.HTTP_200_OK, data={ 
             'status': _status 
         })
+
+
+class InterestCollections(ViewSet): 
+
+
+    def get_all_interests(self): 
+
+        interests = Interest.objects.all() 
+        for interest in interests: 
+            yield interest.interest_name
+
+
+    def list(self, request): 
+
+        interests = list(self.get_all_interests())
+
+        filter_duplicates_interests = set(interests) 
+        return Response(status=status.HTTP_200_OK, data={ 
+            'interests': filter_duplicates_interests
+        })
+
+        
+
+    
 
 
 
