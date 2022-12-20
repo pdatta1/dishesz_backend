@@ -543,6 +543,23 @@ class UserFollowingAPI(ViewSet):
         })
 
 
+class CheckInterestPicked(ViewSet): 
+
+    def check_profile_status(self): 
+
+        user = get_user(self.request.user.username)
+        profile = DisheszUserProfile.objects.get(dishesz_user=user)
+        return profile.get_profile_status() 
+
+    def list(self, request):
+
+        _status = self.check_profile_status() 
+        return Response(status=status.HTTP_200_OK, data={ 
+            'status': _status 
+        })
+
+
+
 class SuggestPeopleToFollow(GenericViewSet): 
 
     """
@@ -573,8 +590,11 @@ class SuggestPeopleToFollow(GenericViewSet):
         container = self.get_user_container() 
         interests = Interest.objects.filter(container=container)
 
-        for interest in interests: 
-            yield interest.interest_name
+        if interests: 
+            for interest in interests: 
+                yield interest.interest_name
+
+
 
 
     

@@ -18,7 +18,8 @@ from users.views import (
     UserFollowersAPI, 
     UserFollowingAPI,
     SuggestPeopleToFollow,
-    LookupUserProfile
+    LookupUserProfile, 
+    CheckInterestPicked
     )
 
 
@@ -36,6 +37,7 @@ user_router.register('user_followers', UserFollowersAPI, basename='user_follower
 user_router.register('user_followings', UserFollowingAPI, basename='user_followings')
 user_router.register('people_to_follow', SuggestPeopleToFollow, basename='people_to_follow')
 user_router.register('lookup_user_profile', LookupUserProfile, basename='lookup_user_profile')
+user_router.register('check_interest_picked', CheckInterestPicked, basename='check_interest_picked')
 
 
 app_name = 'users'
