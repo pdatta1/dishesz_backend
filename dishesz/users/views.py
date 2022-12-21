@@ -560,7 +560,10 @@ class CheckInterestPicked(ViewSet):
 
         if self.check_user_interests(): 
             profile.profile_status = True 
-            profile.save() 
+            profile.save()
+        else: 
+            profile.profile_status = False 
+            profile.save()  
 
         return profile.get_profile_status() 
 
