@@ -23,6 +23,7 @@ from users.serializers import (
     ResetPasswordSerializer, 
     DisheszUserFollowersSerializer,
     DisheszUserFollowingSerializer, 
+    DisheszUserProfileSerializer,
     InterestContainer,
     Interest
 )
@@ -596,10 +597,6 @@ class InterestCollections(ViewSet):
 
         
 
-    
-
-
-
 class SuggestPeopleToFollow(GenericViewSet): 
 
     """
@@ -854,6 +851,26 @@ class LookupUserProfile(ViewSet):
                 'user_profile': self.get_serialized_data()
             })
 
+
+class MyProfileAPI(ViewSet): 
+
+    def get_user_profile(self): 
+
+        profile = DisheszUserProfile.objects.get(dishesz_user=self.request.user)
+        return profile 
+
+    def serialize_user_profile(self): 
+
+        profile = self.get_user_profile() 
+        serializer = DisheszUserProfileSerializer(profile)
+        return serializer.data 
+    
+    def list(self, request): 
+        
+        serializer = self.serialize_user_profile() 
+        return Response(status=status.HTTP_200_OK, data={ 
+            'profile': serializer
+        })
 
 
     

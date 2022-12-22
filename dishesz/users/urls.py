@@ -21,6 +21,7 @@ from users.views import (
     LookupUserProfile, 
     CheckInterestPicked, 
     InterestCollections,
+    MyProfileAPI,
     )
 
 
@@ -40,6 +41,7 @@ user_router.register('people_to_follow', SuggestPeopleToFollow, basename='people
 user_router.register('lookup_user_profile', LookupUserProfile, basename='lookup_user_profile')
 user_router.register('check_interest_picked', CheckInterestPicked, basename='check_interest_picked')
 user_router.register('interest_collections', InterestCollections, basename='interest_collections')
+user_router.register('my_profile', MyProfileAPI, basename='my_profile')
 
 
 app_name = 'users'

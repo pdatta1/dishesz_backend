@@ -21,7 +21,7 @@ from users.models import (
 class DisheszUserProfileSerializer(ModelSerializer): 
 
     dishesz_user = serializers.ReadOnlyField(source='dishesz_user.username')
-    profile_pic = serializers.ImageField()
+    profile_pic = serializers.ReadOnlyField(source='get_profile_pic_src')
     profile_status = serializers.ReadOnlyField() 
 
     class Meta: 
