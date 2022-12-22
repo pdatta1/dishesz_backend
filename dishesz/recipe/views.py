@@ -163,14 +163,27 @@ class SavedRecipe(ViewSet):
         _create_save_recipe = SavedRecipes.objects.create(user=user, recipe=recipe)
         _create_save_recipe.save() 
 
+    def unsaved_recipe(self, user, recipe_id): 
+
+        recipe = Recipe.objects.get(id=recipe_id)
+        unsaved_recipe = SavedRecipes.objects.get(user=user, recipe=recipe)
+        unsaved_recipe.delete() 
 
     def create(self, request): 
         data = request.data 
 
-        self.save_recipe(request.user, data['recipe_id'])
-        return Response(status=status.HTTP_201_CREATED, data={
-            'message': 'recipe saved'
-        })
+        if data['action'] == 'saving':
+            self.save_recipe(request.user, data['recipe_id'])
+            return Response(status=status.HTTP_201_CREATED, data={
+                'message': 'recipe saved'
+            })
+
+        if data['action'] == 'unsaving': 
+            self.unsaved_recipe(request.user, data['recipe_id']) 
+            return Response(status=status.HTTP_200_OK, data={ 
+                'message': 'recipe unsaved'
+            })
+        
 
 
 class MySavedRecipesAPI(ViewSet): 
