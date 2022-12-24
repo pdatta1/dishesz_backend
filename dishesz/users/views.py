@@ -30,7 +30,7 @@ from users.serializers import (
 from users.verify import account_activation_token
 
 
-from recipe.models import Recipe
+from recipe.models import Recipe, SavedRecipes
 from recipe.serializers import RecipeSerializer
 
 from django.contrib.sites.shortcuts import get_current_site
@@ -794,6 +794,14 @@ class LookupUserProfile(ViewSet):
                 yield interest.interest_name
 
 
+    def get_saved_recipes(self, user_model): 
+
+        recipes = Recipe.objects.filter(saved_recipes__user=user_model)
+        serializer = RecipeSerializer(recipes, many=True)
+        return serializer.data 
+
+
+
     def get_recipes(self, user_model): 
 
         """
@@ -820,6 +828,7 @@ class LookupUserProfile(ViewSet):
         user_followers = list(self.get_followers(user_model))
         user_interests = list(self.get_interests(user_model))
         user_recipes = self.get_recipes(user_model)
+        user_saved_recipes = self.get_saved_recipes(user_model)
 
         print(user_followers)
 
@@ -829,6 +838,7 @@ class LookupUserProfile(ViewSet):
         self.add_to_serializer("followers", user_followers)
         self.add_to_serializer("interests", user_interests)
         self.add_to_serializer("recipes", user_recipes)
+        self.add_to_serializer("likes", user_saved_recipes)
 
 
     
