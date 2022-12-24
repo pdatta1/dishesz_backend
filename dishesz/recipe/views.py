@@ -1,6 +1,6 @@
 
 
-from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet, ModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet, ModelViewSet, GenericViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status 
@@ -209,3 +209,47 @@ class MySavedRecipesAPI(ViewSet):
         
         
 
+class InterestLookupAPI(GenericViewSet): 
+
+    """
+        Lookup All Recipes Based on searched interest
+    """
+
+    permission_classes = ( AllowAny, )
+
+    def get_recipes_by_interest(self, interest_name): 
+
+        recipes = Recipe.objects.filter(category=interest_name)
+        return recipes 
+
+    def serialize_recipes(self, page): 
+
+        serializer = RecipeSerializer(page, many=True)
+        return serializer.data 
+
+    def paginate_recipes(self, recipes): 
+
+        page = self.paginate_queryset(recipes)
+        if page is not None: 
+            serializer = self.serialize_recipes(page)
+            return self.get_paginated_response(serializer)
+
+        serializer = self.serialize_recipes(recipes)
+        return serializer 
+
+
+
+
+    def list(self, request): 
+
+        interest_name = request.query_params.get('interest_name')
+        
+        recipes = self.get_recipes_by_interest(interest_name)
+        page = self.paginate_recipes(recipes)
+
+        return Response(status=status.HTTP_200_OK, data={ 
+            'recipes': page 
+        })
+
+
+    

@@ -854,6 +854,10 @@ class LookupUserProfile(ViewSet):
 
 class MyProfileAPI(ViewSet): 
 
+    """
+        Displays requested user profile model
+    """
+
     def get_user_profile(self): 
 
         profile = DisheszUserProfile.objects.get(dishesz_user=self.request.user)
@@ -873,7 +877,7 @@ class MyProfileAPI(ViewSet):
         })
 
 
-    
+
 
 
         

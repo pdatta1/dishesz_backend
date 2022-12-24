@@ -55,6 +55,8 @@ class GenerateData(object):
         if clean_database:
             self.cleanup_user_model() 
 
+    def change_module_dir(self, new_module_dir): 
+        self.module_dir = os.path.dirname(new_module_dir.__file__)
 
     def create_file_module(self, file_directory): 
         """
