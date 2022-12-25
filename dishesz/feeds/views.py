@@ -1,10 +1,14 @@
 
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ViewSet, GenericViewSet
+from rest_framework import filters 
 from rest_framework.response import Response
 from rest_framework import status 
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework.generics import ListAPIView
+
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 
 from users.views import display_generic_green_status, display_generic_red_status
 from users.models import ( 
@@ -12,8 +16,11 @@ from users.models import (
     Interest, 
     DisheszUserFollowing
 )
+from users.views import LookupUserProfileEssentials, get_user 
+
 from recipe.models import Recipe 
 from recipe.serializers import RecipeSerializer
+from recipe.pagination import RecipeViewPagination
 
 
 
@@ -181,6 +188,66 @@ class GenerateUserFeeds(ViewSet):
         return Response(status=status.HTTP_200_OK, data={
             'feeds': user_feeds
         })
+
+
+class GenericLookupAPI(GenericViewSet): 
+
+    """"
+        This API is responsible for lookup of anything such as recipes, users, etc.
+    """
+
+    
+    def get_recipe(self, recipe_name): 
+
+        if Recipe.objects.filter(recipe_name=recipe_name).exists(): 
+            recipe = Recipe.objects.get(recipe_name=recipe_name)
+            serializer = RecipeSerializer(recipe, many=False)
+            return serializer.data 
+        return None 
+
+    
+    def get_user(self, username): 
+
+        essentials = LookupUserProfileEssentials() 
+
+        if get_user_model().objects.filter(username=username).exists(): 
+
+            user = get_user_model().objects.get(username=username)
+            essentials.serialized_response_data(user)
+            return essentials.get_serialized_data()
+
+        return None 
+
+    
+    def list(self, request): 
+
+
+        search_query = request.query_params.get('search_query')
+
+        searched_recipe = self.get_recipe(search_query)
+        search_user = self.get_user(search_query)
+
+        if searched_recipe is not None: 
+            return Response(status=status.HTTP_200_OK, data={ 
+                'recipe': searched_recipe
+            })
+
+        if search_user is not None: 
+            return Response(status=status.HTTP_200_OK, data={ 
+                'user': search_user
+            })
+
+        return Response(status=status.HTTP_200_OK, data=None)        
+
+            
+
+
+        
+
+    
+    
+
+    
 
             
 

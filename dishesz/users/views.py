@@ -723,7 +723,7 @@ class SuggestPeopleToFollow(GenericViewSet):
         })
 
 
-class LookupUserProfile(ViewSet): 
+class LookupUserProfileEssentials(object): 
 
     """
         @purpose: 
@@ -731,8 +731,6 @@ class LookupUserProfile(ViewSet):
               by a search of their username
 
     """
-
-
 
     serialized_data = {}
 
@@ -830,7 +828,6 @@ class LookupUserProfile(ViewSet):
         user_recipes = self.get_recipes(user_model)
         user_saved_recipes = self.get_saved_recipes(user_model)
 
-        print(user_followers)
 
         self.add_to_serializer("username", user_model.username)
         self.add_to_serializer("profile_pic", user_profile.get_profile_pic_src())
@@ -841,7 +838,9 @@ class LookupUserProfile(ViewSet):
         self.add_to_serializer("likes", user_saved_recipes)
 
 
-    
+
+class LookupUserProfile(ViewSet): 
+
     def create(self, request): 
 
         """
@@ -855,11 +854,14 @@ class LookupUserProfile(ViewSet):
         username = request.data["username"]
         user = get_user(username=username)
 
+        essentials = LookupUserProfileEssentials()
+
         if username: 
-            self.serialized_response_data(user_model=user)
+            essentials.serialized_response_data(user_model=user)
             return Response(status=status.HTTP_200_OK, data={ 
-                'user_profile': self.get_serialized_data()
+                'user_profile': essentials.get_serialized_data()
             })
+
 
 
 class MyProfileAPI(ViewSet): 
