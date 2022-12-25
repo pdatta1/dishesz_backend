@@ -229,12 +229,12 @@ class GenericLookupAPI(GenericViewSet):
 
         if searched_recipe is not None: 
             return Response(status=status.HTTP_200_OK, data={ 
-                'recipe': searched_recipe
+                'recipes': searched_recipe
             })
 
         if search_user is not None: 
             return Response(status=status.HTTP_200_OK, data={ 
-                'user': search_user
+                'users': search_user
             })
 
         return Response(status=status.HTTP_200_OK, data=None)        
