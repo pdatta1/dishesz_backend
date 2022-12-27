@@ -223,13 +223,12 @@ class GenericLookupAPI(GenericViewSet):
 
         essentials = LookupUserProfileEssentials() 
 
-        if get_user_model().objects.filter(username__contains=username).exists(): 
+        if get_user_model().objects.filter(username=username).exists(): 
 
-            users = get_user_model().objects.filter(username__contains=username)
+            user = get_user_model().objects.get(username=username)
 
-            for user in users: 
-                essentials.serialized_response_data(user)
-                yield essentials.get_serialized_data()
+            essentials.serialized_response_data(user)
+            return essentials.get_serialized_data()
 
         return None 
 
@@ -241,19 +240,22 @@ class GenericLookupAPI(GenericViewSet):
             and return api response 
         """
 
+        users_query = [] 
         search_query = request.query_params.get('search_query')
 
         searched_recipes = self.get_recipes(search_query)
-        search_users = list(self.get_users(search_query))
+        search_users = self.get_users(search_query)
 
         if searched_recipes is not None: 
             return Response(status=status.HTTP_200_OK, data={ 
                 'recipes': searched_recipes
             })
 
+
         if search_users is not None: 
+            users_query.append(search_users)
             return Response(status=status.HTTP_200_OK, data={ 
-                'users': search_users
+                'users': users_query
             })
 
         return Response(status=status.HTTP_200_OK, data=None)        
