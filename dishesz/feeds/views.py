@@ -9,6 +9,7 @@ from rest_framework.generics import ListAPIView
 
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.db.models import Q 
 
 from users.views import display_generic_green_status, display_generic_red_status
 from users.models import ( 
@@ -197,44 +198,62 @@ class GenericLookupAPI(GenericViewSet):
     """
 
     
-    def get_recipe(self, recipe_name): 
+    def get_recipes(self, recipe_name): 
 
-        if Recipe.objects.filter(recipe_name=recipe_name).exists(): 
-            recipe = Recipe.objects.get(recipe_name=recipe_name)
-            serializer = RecipeSerializer(recipe, many=False)
+        """
+            Get Recipe by name if exists 
+            :param recipe_name: recipe_name to be retrieved
+            :returns None if recipe do not exist 
+        """
+
+        if Recipe.objects.filter(recipe_name__contains=recipe_name).exists(): 
+            recipes = Recipe.objects.filter(recipe_name__contains=recipe_name)
+            serializer = RecipeSerializer(recipes, many=True)
             return serializer.data 
         return None 
 
     
-    def get_user(self, username): 
+    def get_users(self, username): 
+
+        """
+            Get User by username if exists 
+            :param username: username to be retrieve
+            :returns None if recipe do not exist
+        """
 
         essentials = LookupUserProfileEssentials() 
 
-        if get_user_model().objects.filter(username=username).exists(): 
+        if get_user_model().objects.filter(username__contains=username).exists(): 
 
-            user = get_user_model().objects.get(username=username)
-            essentials.serialized_response_data(user)
-            return essentials.get_serialized_data()
+            users = get_user_model().objects.filter(username__contains=username)
+
+            for user in users: 
+                essentials.serialized_response_data(user)
+                yield essentials.get_serialized_data()
 
         return None 
 
     
     def list(self, request): 
 
+        """
+            get search_query param from request, get searched user or recipe, 
+            and return api response 
+        """
 
         search_query = request.query_params.get('search_query')
 
-        searched_recipe = self.get_recipe(search_query)
-        search_user = self.get_user(search_query)
+        searched_recipes = self.get_recipes(search_query)
+        search_users = list(self.get_users(search_query))
 
-        if searched_recipe is not None: 
+        if searched_recipes is not None: 
             return Response(status=status.HTTP_200_OK, data={ 
-                'recipes': searched_recipe
+                'recipes': searched_recipes
             })
 
-        if search_user is not None: 
+        if search_users is not None: 
             return Response(status=status.HTTP_200_OK, data={ 
-                'users': search_user
+                'users': search_users
             })
 
         return Response(status=status.HTTP_200_OK, data=None)        
