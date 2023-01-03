@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+from notify.manager import NotificationManager
+
 
 REFFERED_CHOICES = ( 
 
@@ -20,7 +22,10 @@ class Notification(models.Model):
     description = models.CharField(max_length=128, blank=False, null=False)
     created_on = models.DateTimeField(auto_now_add=True)
     reffered = models.CharField(max_length=16, choices=REFFERED_CHOICES)
+    reffered_id = models.CharField(max_length=15, null=True)
     is_viewed = models.BooleanField(default=False)
     dishesz_user = models.ForeignKey(to='users.DisheszUser', on_delete=models.CASCADE, related_name='user_notifications')
+
+    objects = NotificationManager() 
 
     

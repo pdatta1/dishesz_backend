@@ -5,12 +5,25 @@ from pathlib import Path
 from decouple import config 
 import os 
 
+from .core import AllowedHosts
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 ENV_NAME = config('ENV_NAME')
 DEBUG = True
 
-ALLOWED_HOSTS = ["scrapnc.com", "www.scrapnc.com", "18.191.137.57", "127.0.0.1", "testserver", "192.168.1.200"]
+
+host = AllowedHosts() 
+host.add_host('scrapnc.com')
+host.add_host('www.scrapnc.com')
+host.add_host('18.191.137.57')
+host.add_host('127.0.0.1')
+host.add_host('testserver')
+host.add_host('192.168.1.200')
+
+ALLOWED_HOSTS = host.get_allowed_hosts() 
+
+
 AUTH_USER_MODEL = 'users.DisheszUser'
 
 # Application definition
@@ -22,15 +35,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users', 
-    'recipe',
-    'feeds',
-    'notify',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders', 
     'storages',
     'channels',
+    'users', 
+    'recipe',
+    'feeds',
+    'notify',
+
 
 ]
 
@@ -66,14 +80,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dishesz.wsgi.application'
 ASGI_APPLICATION = 'dishesz.asgi.application'
 
-CHANNEL_LAYERS = { 
-    'default': { 
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': { 
-            "hosts": ['redis://redis:6379']
-        }
-    }
-}
+
+
+
 
 
 if ENV_NAME == 'staging-development': 
@@ -87,6 +96,15 @@ if ENV_NAME == 'staging-development':
             'PASSWORD': config('DATABASE_PASSWORD'),
             'HOST': config('DATABASE_HOST'), 
             'PORT': config('DATABASE_PORT'),
+        }
+    }
+
+    CHANNEL_LAYERS = { 
+        'default': { 
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': { 
+                "hosts": ['redis://redis:6379']
+            }
         }
     }
 
@@ -114,6 +132,16 @@ if ENV_NAME == 'local-development':
         }
     }
 
+    CHANNEL_LAYERS = { 
+        'default': { 
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': { 
+                'hosts': [('127.0.0.1', 6379)],
+            }
+           
+        }
+    }
+
 
 
 
@@ -129,6 +157,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

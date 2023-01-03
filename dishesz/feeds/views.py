@@ -17,7 +17,7 @@ from users.models import (
     Interest, 
     DisheszUserFollowing
 )
-from users.views import LookupUserProfileEssentials, get_user 
+from users.essentials import LookupUserProfileEssentials
 
 from recipe.models import Recipe 
 from recipe.serializers import RecipeSerializer

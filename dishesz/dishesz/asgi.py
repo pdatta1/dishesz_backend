@@ -15,6 +15,8 @@ from middlewares.auth_websocket import TokenAuthMiddlewareStack
 from websocket_routing.routing import WebSocketRouting
 from notify.consumer import NotifyConsumer
 
+from notify.routing import notify_urlpatterns
+
 # intialize websocket routing and add consumers
 websocket_router = WebSocketRouting() 
 websocket_router.add_route('ws/notify/', NotifyConsumer)

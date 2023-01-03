@@ -13,6 +13,8 @@ from recipe.pagination import RecipeViewPagination
 
 from users.permissions import IsOwner
 
+from notify.core.send_notify import handle_saves_notification
+
 
 class ViewRecipeViewSet(ReadOnlyModelViewSet): 
     """
@@ -124,16 +126,19 @@ class LeaveReview(ViewSet):
 
         # create review and return review
         review = Review.objects.create(author=user, recipe=recipe, **review_data)
-        return review 
+        return ( recipe, review )
 
     def create(self, request): 
 
         data = request.data 
         auth_user = request.user 
 
-        review_data = self.create_review(auth_user, data)
+        recipe_data, review_data = self.create_review(auth_user, data)
+        handle_saves_notification(request.user.username, recipe_data.author.username, recipe_data.id)
+
         return Response(status=status.HTTP_201_CREATED, data={ 
-            'message': f'Review Created on Recipe {review_data.recipe}'
+            'message': f'Review Created on Recipe {review_data.recipe}',
+            'notify': recipe_data.author.username 
         })
     
 
