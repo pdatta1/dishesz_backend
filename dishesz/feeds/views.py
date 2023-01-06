@@ -24,6 +24,8 @@ from recipe.serializers import RecipeSerializer
 from recipe.pagination import RecipeViewPagination
 
 
+from itertools import chain 
+
 
 
 class EstablishUserInterestAPI(ViewSet): 
@@ -116,13 +118,16 @@ class EstablishUserInterestAPI(ViewSet):
     
 
 
-class GenerateUserFeeds(ViewSet): 
+class GenerateUserFeeds(GenericViewSet): 
     """
         This class is responsible for generate user feeds based 
         on liked or saved interests and followings
     """
 
     permission_classes = (IsAuthenticated, ) 
+    serializer_class  = RecipeSerializer
+    pagination_class = RecipeViewPagination
+    
 
 
     def get_user_container(self): 
@@ -171,25 +176,30 @@ class GenerateUserFeeds(ViewSet):
         # return recipes 
         return recipes 
 
-
-    def list(self, request): 
-
-
-        user_feeds = []  
+    
+    def get_queryset(self):
 
         recipe_feeds = self.generate_interested_recipes() 
-        followings_feed = self.get_following_recipes() 
+        following_feeds = self.get_following_recipes() 
 
-        recipe_serializer = RecipeSerializer(recipe_feeds, many=True)
-        followings_serializer = RecipeSerializer(followings_feed, many=True)
-
-        user_feeds = recipe_serializer.data + followings_serializer.data 
+        user_feeds = list(chain(recipe_feeds, following_feeds))
+        return user_feeds
 
 
-        return Response(status=status.HTTP_200_OK, data={
-            'feeds': user_feeds
-        })
+    def list(self, request, *args, **kwargs): 
 
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None: 
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+        
 
 class GenericLookupAPI(GenericViewSet): 
 
