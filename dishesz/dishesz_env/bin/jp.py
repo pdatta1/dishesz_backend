@@ -1,4 +1,4 @@
-#!/home/zeusgod/Projects/backend/dishesz/dishesz_env/bin/python3
+#!/home/zeus-desktop/Projects/dishesz/backend/dishesz/dishesz_env/bin/python3
 
 import sys
 import json
