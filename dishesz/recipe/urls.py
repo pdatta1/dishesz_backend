@@ -10,7 +10,8 @@ from recipe.views import (
     LeaveReview, 
     SavedRecipe, 
     ViewRecipeViewSet,
-    InterestLookupAPI
+    InterestLookupAPI, 
+    AllRecipeCategoriesAPI
 )
 
 
@@ -23,6 +24,7 @@ recipe_router.register(r'delete_recipe_photo', DeletePhotoAssignAPI, basename='d
 recipe_router.register(r'save_recipe', SavedRecipe, basename='save_recipe')
 recipe_router.register(r'get_saved_recipes', MySavedRecipesAPI, basename='get_saved_recipes')
 recipe_router.register(r'interest_lookup', InterestLookupAPI, basename='interest_lookup')
+recipe_router.register(r'all_categories', AllRecipeCategoriesAPI, basename='all_categories')
 
 app_name = 'recipes'
 urlpatterns = [ 

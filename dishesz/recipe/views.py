@@ -257,4 +257,23 @@ class InterestLookupAPI(GenericViewSet):
         })
 
 
+
+class AllRecipeCategoriesAPI(ViewSet): 
+
+    def get_all_categories(self): 
+
+        data = [] 
+        categories = Recipe.objects.values('category')
+        
+        for category in categories: 
+            data.append(category['category'])
+
+        return set(data)
+
+
+    def list(self, request): 
+        
+        all_categories = self.get_all_categories() 
+
+        return Response(status=status.HTTP_200_OK, data=all_categories)
     
