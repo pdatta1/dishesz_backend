@@ -69,7 +69,7 @@ class AssignPhotoToRecipeAPI(ModelViewSet):
         """
 
         recipe = Recipe.objects.get(id=self.request.data['recipe_id'])
-        serializer.save(recipe=recipe)
+        serializer.save(recipe=recipe, src=self.request.data['src'])
 
 
 class DeletePhotoAssignAPI(ViewSet): 
@@ -221,6 +221,16 @@ class InterestLookupAPI(GenericViewSet):
     """
 
     permission_classes = ( AllowAny, )
+    pagination_class = RecipeViewPagination
+    serializer_class = RecipeSerializer
+
+    def get_queryset(self):
+
+        interest_name = self.request.query_params.get('interest_name')
+        queryset = self.get_recipes_by_interest(interest_name) 
+        return queryset
+        
+
 
     def get_recipes_by_interest(self, interest_name): 
 
@@ -232,29 +242,27 @@ class InterestLookupAPI(GenericViewSet):
         serializer = RecipeSerializer(page, many=True)
         return serializer.data 
 
-    def paginate_recipes(self, recipes): 
 
-        page = self.paginate_queryset(recipes)
-        if page is not None: 
-            serializer = self.serialize_recipes(page)
-            return self.get_paginated_response(serializer)
-
-        serializer = self.serialize_recipes(recipes)
-        return serializer 
 
 
 
 
     def list(self, request): 
 
-        interest_name = request.query_params.get('interest_name')
         
-        recipes = self.get_recipes_by_interest(interest_name)
-        page = self.paginate_recipes(recipes)
+        queryset = self.get_queryset()
+        filter_querysyet = self.filter_queryset(queryset)
 
-        return Response(status=status.HTTP_200_OK, data={ 
-            'recipes': page 
-        })
+        page = self.paginate_queryset(filter_querysyet)
+        if page is not None: 
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(page, many=True)
+        return Response(status=status.HTTP_200_OK, data={'recipes': serializer.data})
+
+
+
 
 
 
