@@ -69,7 +69,7 @@ class AssignPhotoToRecipeAPI(ModelViewSet):
         """
 
         recipe = Recipe.objects.get(id=self.request.data['recipe_id'])
-        serializer.save(recipe=recipe, src=self.request.data['src'])
+        serializer.save(recipe=recipe)
 
 
 class DeletePhotoAssignAPI(ViewSet): 
