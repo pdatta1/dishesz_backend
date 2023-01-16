@@ -77,7 +77,7 @@ class RecipeSerializer(ModelSerializer):
     prep_time = serializers.CharField(max_length=24, allow_blank=False, required=True)
     cook_time = serializers.CharField(max_length=24, allow_blank=False, required=True)
     directions = serializers.CharField(min_length=24, max_length=512, allow_blank=False, required=True)
-    category = serializers.CharField(max_length=15, allow_blank=False)
+    category = serializers.CharField(max_length=40, allow_blank=False)
 
     ingredients = IngredientSerializers(many=True)
     photos = PhotoSerializer(read_only=True, many=True)
